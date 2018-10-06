@@ -251,10 +251,10 @@ async function create_changed_transaction(){
 
     var account = await window.web3.eth.accounts[0];
 
-    var url = "http://localhost:8080/ScratchPaperScribbles/web3/build/contracts/SimpleContract.json";
+    var url = "http://localhost:8080/ScratchPaperScribbles/web3/build/contracts/Harberger.json";
     var contractAbi = null;
-    await $.getJSON(url, function(SimpleContract){
-        contractAbi = SimpleContract.abi;
+    await $.getJSON(url, function(contract){
+        contractAbi = contract.abi;
     });
 
     var contractAddress = "0x0";
