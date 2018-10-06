@@ -239,9 +239,34 @@ function file_load_from_url(){
 	$w.center();
 	$input.focus();
 }
+
 var $create_changed_transaction;
-function create_changed_transaction(){
-    console.log('create_changed_transaction')
+async function create_changed_transaction(){
+    console.log('create_changed_transaction');
+
+    var { currentProvider: cp } = window.web3;
+    var isToshi = !!cp.isToshi;
+    var isCipher = !!cp.isCipher;
+    var isMetaMask = !!cp.isMetaMask;
+
+    var account = await window.web3.eth.accounts[0];
+
+    var url = "http://localhost:8080/ScratchPaperScribbles/web3/build/contracts/SimpleContract.json";
+    var contractAbi = null;
+    await $.getJSON(url, function(SimpleContract){
+        contractAbi = SimpleContract.abi;
+    });
+
+    var contractAddress = "0x0";
+
+    // var contract = new window.web3.eth.Contract(contractAbi, contractAddress);
+    // var err, fee = await contract.methods.getFeeInWei().call();
+    // var err, tx = await contract.methods.contractFunction(argument)
+    //     .send({from: account, value: fee, gas: 300000})
+    //     .on('transactionHash', hash => {
+    //         // do stuff post-call
+    //     });
+
 }
 
 function file_save(){
@@ -719,12 +744,12 @@ function select_tool(tool){
 		previous_tool = selected_tool;
 	}
 	selected_tool = tool;
-	
+
 	deselect();
 	if(selected_tool.activate){
 		selected_tool.activate();
 	}
-	
+
 	$toolbox.update_selected_tool();
 	// $toolbox2.update_selected_tool();
 }
@@ -1073,7 +1098,7 @@ function set_as_wallpaper_tiled(c){
 
 function set_as_wallpaper_centered(c){
 	c = c || canvas;
-	
+
 	// Note: we can't just poke in a different set_as_wallpaper_centered function, because it's stored in menus.js
 	if(window.systemSetAsWallpaperCentered){
 		return window.systemSetAsWallpaperCentered(c);
