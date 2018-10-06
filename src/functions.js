@@ -239,6 +239,10 @@ function file_load_from_url(){
 	$w.center();
 	$input.focus();
 }
+var $create_changed_transaction;
+function create_changed_transaction(){
+    console.log('create_changed_transaction')
+}
 
 function file_save(){
 	deselect();

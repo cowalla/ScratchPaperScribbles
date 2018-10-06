@@ -34,6 +34,11 @@ var menus = {
 			description: "Opens an image from the web.",
 		},
 		{
+			item: "&Save to Blockchain",
+			action: create_changed_transaction,
+			description: "Creates a transaction for MetaMask to submit",
+		},
+		{
 			item: "&Upload To Imgur",
 			action: function(){
 				// include the selection in the saved image
