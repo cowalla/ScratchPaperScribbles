@@ -7,5 +7,6 @@ node_modules/
 # os crap
 Thumbs.db
 ~*
+.idea*
 
 *.idea
