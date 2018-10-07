@@ -35,6 +35,9 @@ contract Harberger {
     }
 
     function singlePixel(uint256 _id, string _color, uint256 _bid) internal {
+        if (pixels[_id].lastUpdate == 0) {
+            pixels[_id] = ID("#FFFFFF", minBid, timeLimit);
+        }
         bool expired = (block.number - pixels[_id].lastUpdate) >= timeLimit;
         uint256 cost;
 
