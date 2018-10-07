@@ -76,6 +76,14 @@ contract Harberger {
         }
     }
 
+    function getPixelColor(uint _id) public view returns(string) {
+        return pixels[_id].color;
+    }
+
+    function getPixelValue(uint _id) public view returns(uint256) {
+        return pixels[_id].value;
+    }
+
 //     function changeTimeLimit(uint256 _timeLimit) public onlyOwner {
 //         timeLimit = _timeLimit;
 //     }
