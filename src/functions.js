@@ -455,14 +455,25 @@ function hex_list_to_ids_colors_bids(hex_list, bid){
     return [ids, colors, bids]
 }
 
-
-function put_pixel_values_from_blockchain() {
-    var imageData = canvas.ctx.getImageData(0,0,canvas.width,canvas.height)
-    var maxIndex = canvas.width * canvas.height;
-
+function get_image_data_from_blockchain(){
+//    var maxIndex = canvas.width * canvas.height;
+    var maxIndex = 1000;
+        imageData = canvas.ctx.getImageData(0,0,1000,1)
     for(var i=0; i<maxIndex; i++){
-        imageData.data[i] = contract.getPixelColor(i);
+        window.contract.getPixelColor(i, function(rgba){
+            console.log(rgba);
+            imageData.data[i] = rgba
+        });
     }
+
+    return imageData
+}
+
+var $put_pixel_values_from_blockchain;
+function put_pixel_values_from_blockchain() {
+    get_image_data_from_blockchain(function(imData){
+        canvas.ctx.putImageData(imData, 0, 0)
+    })
 }
 
 
@@ -496,7 +507,7 @@ async function create_changed_transaction(){
         colors,
         bids,
 		{
-			from: account,
+			from: window.account,
 			value: 10000000000000000,
 			gas: 300000000
 		},

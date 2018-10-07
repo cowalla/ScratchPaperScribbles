@@ -1,5 +1,4 @@
-var account,
-    contractAbi,
+var contractAbi,
     contractAddress,
     url = 'http://localhost:63342/ScratchPaperScribbles/eth/build/contracts/Harberger.json'
 
@@ -16,7 +15,7 @@ if (typeof web3 !== 'undefined') {
 }
 
 (async function(){
-    account = await web3.eth.accounts[0];
+    window.account = await web3.eth.accounts[0];
     await $.getJSON(url, function(contract){
         window.contract = contract;
         contractAbi = window.contract.abi;
