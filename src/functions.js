@@ -374,60 +374,8 @@ function on_blockchain_hex_updated(bc_hex){
     canvas.ctx.putImageData(imageData, 0, 0);
 }
 
-
-//var $submit_drawing;
-//function submit_drawing(){
-//    undoable(0, function(){
-//        var canvasHeight = canvas.height
-//        var canvasWidth = canvas.width
-//        var imageData = canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-//        // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
-//        // Diff blockchain data
-//        // Create transactions
-//        var hexes = image_data_to_hex_list(imageData)
-//
-//        imageData = hex_list_to_image_data(hexes, imageData)
-//        imageData = random_change(imageData, 4)
-//        canvas.ctx.putImageData(imageData, 0, 0);
-//    });
-//
-//    if(undos.length<1){ return false; }
-//	this_ones_a_frame_changer();
-//
-//	redos.push(new Canvas(canvas));
-//
-//	ctx.copy(undos.pop());
-//}
-
 var $submit_drawing;
-function submit_drawing(){
-    if(undos.length == 0){console.log('nothing to do!'); return}
-
-    var lastAction = undos[undos.length-1];
-    var canvasHeight = lastAction.height
-    var canvasWidth = lastAction.width
-
-    // only submit one action
-    var oldHexes = image_data_to_hex_list(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
-    var imageData = image_data_to_hex_list(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
-    var toChange = hex_list_difference(oldHexes, imageData)
-
-    // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
-    // Diff blockchain data
-    // Create transactions
-    var hexes = image_data_to_hex_list(imageData)
-//
-//    imageData = hex_list_to_image_data(hexes, imageData)
-//    imageData = random_change(imageData, 4)
-//    canvas.ctx.putImageData(imageData, 0, 0);
-//
-//    if(undos.length<1){ return false; }
-//	this_ones_a_frame_changer();
-//
-//	redos.push(new Canvas(canvas));
-//
-//	ctx.copy(undos.pop());
-}
+function submit_drawing(){}
 
 function ascii_to_hexa(str)
   {
@@ -453,36 +401,6 @@ function hex_list_to_ids_colors_bids(hex_list, bid){
     }
 
     return [ids, colors, bids]
-}
-
-function get_image_data_from_blockchain(){
-//    var maxIndex = canvas.width * canvas.height;
-    var maxIndex = 1000;
-    imageData = canvas.ctx.getImageData(0,0,canvas.width, canvas.height)
-
-//    function(imData){
-//        for(var i=0; i<maxIndex; i++){
-//            window.contract.getPixelColor(i, function(err, rgba){
-//                console.log(rgba.toString());
-//                [r,g,b] = rgba.toString().split(',')
-//                var idx = 4 * i
-//                imData.data[idx] = r
-//                imData.data[idx+1] = g
-//                imData.data[idx+2] = b
-//                imData.data[idx+3] = 255
-//            });
-//        }
-//    }
-
-
-    canvas.ctx.putImageData(imageData, 0, 0);
-}
-
-var $put_pixel_values_from_blockchain;
-function put_pixel_values_from_blockchain() {
-    get_image_data_from_blockchain(function(imData){
-        canvas.ctx.putImageData(imData, 0, 0)
-    })
 }
 
 
