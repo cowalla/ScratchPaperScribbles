@@ -1,6 +1,6 @@
 var contractAbi,
     contractAddress,
-    url = "https://github.com/cowalla/ScratchPaperScribbles/blob/master/eth/build/contracts/Harberger.json";
+    url = "http://localhost:63342/ScratchPaperScribbles/eth/build/contracts/Harberger.json",
     imageSize = 1000;
 
 var { currentProvider: cp } = window.web3;
@@ -32,8 +32,8 @@ function erase_canvas(){
     await $.getJSON(url, function(contract){
         window.contract = contract;
         contractAbi = window.contract.abi;
-        contractAddress = window.contract.networks["5777"].address;
-        contractTxHash = window.contract.networks["5777"].transactionHash;
+        contractAddress = window.contract.networks["3"].address;
+        contractTxHash = window.contract.networks["3"].transactionHash;
         window.contract = web3.eth.contract(contractAbi).at(contractAddress);
 
         erase_canvas()
