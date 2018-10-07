@@ -21,9 +21,11 @@ if (typeof web3 !== 'undefined') {
         contractAbi = window.contract.abi;
         contractAddress = window.contract.networks["5777"].address;
         window.contract = web3.eth.contract(contractAbi).at(contractAddress);
-//
-//        window.contract.Paint().watch(function(err, response){
-//            console.log(response.args.RGB.toString().split(','))
-//        })
+        
+        var event = window.contract.Paint({}, {fromBlock: 0}, function(error, result) {
+            if (!error) {
+                console.log(result);
+            }
+        });
     });
 })(this);
