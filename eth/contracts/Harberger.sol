@@ -59,22 +59,21 @@ contract Harberger {
     }
 
     function paintPixels(uint256[] _ids, string[] _colors, uint256[] _bids) payable public {
-        require(_ids.length == _colors.length == _bids.length);
-        // commons.transfer(msg.value);
+        // require(_ids.length == _colors.length == _bids.length);
         uint256 paintCredit = msg.value;
+        commons.transfer(msg.value);
 
-        // for (uint256 i = 0; i < _ids.length; i++) {
-        //    uint256 _id = _ids[i];
-        //   string memory _color = _colors[i];
-        //    uint256 _bid = _bids[i];
-        //    paintCredit -= _bid;
-        //    if (paintCredit >= 0) {
-        //        singlePixel(_id, _color, _bid);
-        //    }
-        //    else {
-        //        break;
-        //    }
-        // }
+
+        for(uint32 i=0; i<_ids.length; i++){
+           uint256 _id = _ids[_id];
+           string memory _color = _colors[i];
+           uint256 _bid = _bids[i];
+           paintCredit -= _bid;
+
+           if (paintCredit >= 0) {
+                singlePixel(_id, _color, _bid);
+           }
+        }
     }
 
 //     function changeTimeLimit(uint256 _timeLimit) public onlyOwner {

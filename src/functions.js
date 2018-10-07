@@ -269,9 +269,9 @@ async function create_changed_transaction(){
 
     var contract = null;
     var contract = web3.eth.contract(contractAbi).at(contractAddress);
-    var arraySize = 1
+    var arraySize = 100
     var minBid = 100000000000000;
-    var bid = 10 * minBid
+    var bid = 13 * minBid
     var bids = new Array(arraySize).fill(bid);
     var color = "#FFFFFF"
     var colors = new Array(arraySize).fill(bid);
@@ -286,6 +286,11 @@ async function create_changed_transaction(){
         ids,
         colors,
         bids,
+		{
+			from: account,
+			value: 10000000000000000,
+			gas: 30000000
+		},
         function(d){console.log('completed')}
     )
 
