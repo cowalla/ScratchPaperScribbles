@@ -71,6 +71,7 @@ contract Harberger {
         }
     }
 
+
     function getPixelColor(uint _id) public view returns (uint16[3]) {
         return pixels[_id].rgb;
     }

@@ -22,8 +22,35 @@ if (typeof web3 !== 'undefined') {
         contractAddress = window.contract.networks["5777"].address;
         window.contract = web3.eth.contract(contractAbi).at(contractAddress);
 //
-//        window.contract.Paint().watch(function(err, response){
-//            console.log(response.args.RGB.toString().split(','))
-//        })
+        window.contract.Paint().watch(function(err, response){
+            var imageData = canvas.ctx.getImageData(0,0,canvas.width, canvas.height)
+            var id = parseInt(response.args.ID.toString())
+            console.log(id);
+            var [r,g,b] = response.args.RGB.toString().split(',')
+            var value = parseInt(response.args.Value.toString())
+
+            var idx = 4 * id
+            imageData.data[idx] = parseInt(r)
+            imageData.data[idx+1] = parseInt(g)
+            imageData.data[idx+2] = parseInt(b)
+            imageData.data[idx+3] = 255
+
+            canvas.ctx.putImageData(imageData, 0, 0)
+        });
     });
 })(this);
+
+
+//    function(imData){
+//        for(var i=0; i<maxIndex; i++){
+//            window.contract.getPixelColor(i, function(err, rgba){
+//                console.log(rgba.toString());
+//                [r,g,b] = rgba.toString().split(',')
+//                var idx = 4 * i
+//                imData.data[idx] = r
+//                imData.data[idx+1] = g
+//                imData.data[idx+2] = b
+//                imData.data[idx+3] = 255
+//            });
+//        }
+//    }

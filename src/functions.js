@@ -458,15 +458,24 @@ function hex_list_to_ids_colors_bids(hex_list, bid){
 function get_image_data_from_blockchain(){
 //    var maxIndex = canvas.width * canvas.height;
     var maxIndex = 1000;
-        imageData = canvas.ctx.getImageData(0,0,1000,1)
-    for(var i=0; i<maxIndex; i++){
-        window.contract.getPixelColor(i, function(rgba){
-            console.log(rgba);
-            imageData.data[i] = rgba
-        });
-    }
+    imageData = canvas.ctx.getImageData(0,0,canvas.width, canvas.height)
 
-    return imageData
+//    function(imData){
+//        for(var i=0; i<maxIndex; i++){
+//            window.contract.getPixelColor(i, function(err, rgba){
+//                console.log(rgba.toString());
+//                [r,g,b] = rgba.toString().split(',')
+//                var idx = 4 * i
+//                imData.data[idx] = r
+//                imData.data[idx+1] = g
+//                imData.data[idx+2] = b
+//                imData.data[idx+3] = 255
+//            });
+//        }
+//    }
+
+
+    canvas.ctx.putImageData(imageData, 0, 0);
 }
 
 var $put_pixel_values_from_blockchain;
