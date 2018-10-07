@@ -239,9 +239,112 @@ function file_load_from_url(){
 	$w.center();
 	$input.focus();
 }
+
+function component_to_hex(c) {
+    var hex = c.toString(16);
+
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgba_to_hex(rgba) {
+    var r = rgba[0]
+    var g = rgba[1]
+    var b = rgba[2]
+
+    return "#" + component_to_hex(r) + component_to_hex(g) + component_to_hex(b);
+}
+
+function hex_to_rgba(hex) {
+    var r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16);
+
+    return [r, g, b, 255]
+}
+
+
+function chunk (arr, len) {
+    // TODO: remove
+  var chunks = [],
+      i = 0,
+      n = arr.length;
+
+  while (i < n) {
+    chunks.push(arr.slice(i, i += len));
+  }
+
+  return chunks;
+}
+
+
+function image_data_to_hex_list(image_data){
+    var hexes = []
+    var rgba_data = chunk(image_data.data, 4)
+
+    for(var i=0; i<rgba_data.length; i++){
+        var rgba = rgba_data[i];
+        hexes.push(rgba_to_hex(rgba));
+    }
+
+    return hexes
+}
+
+function hex_list_to_image_data(hexList, im_data){
+    for(var i=0; i<hexList.length; i++){
+        var rgba = hex_to_rgba(hexList[i]);
+        var image_index = 4 * i
+
+        im_data.data[image_index] = rgba[0];
+        im_data.data[image_index + 1] = rgba[1];
+        im_data.data[image_index + 2] = rgba[2];
+        im_data.data[image_index + 3] = rgba[3];
+    }
+
+    return im_data
+}
+// diff two hexlists into a list of (index, new_hex) entries
+
+function hex_list_difference(oldHexes, newHexes) {
+    var differences = [];
+
+    for (var i=0; i<newHexes.length; i++){
+        if(oldHexes[i] !== newHexes[i]){
+            differences.push([i, newHexes[i]]);
+        }
+    }
+
+    return differences
+}
+
+function random_change(image_data, change_factor){
+    for(i=0; i<(image_data.data.length - 3); i++){
+        randint = Math.floor((Math.random() * 100) + 1);
+
+        if (randint < change_factor) {
+            image_data.data[i] = 24
+            image_data.data[i+1] = 46
+            image_data.data[i+2] = 72
+            image_data.data[i+3] = 88
+        }
+    }
+
+    return image_data
+}
+
 var $create_changed_transaction;
 function create_changed_transaction(){
     console.log('create_changed_transaction')
+    var canvasHeight = canvas.height
+    var canvasWidth = canvas.width
+    var imageData = canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
+    // Diff blockchain data
+    // Create transactions
+    var hexes = image_data_to_hex_list(imageData)
+
+    imageData = hex_list_to_image_data(hexes, imageData)
+    imageData = random_change(imageData, 4)
+    canvas.ctx.putImageData(imageData, 0, 0);
 }
 
 function file_save(){
