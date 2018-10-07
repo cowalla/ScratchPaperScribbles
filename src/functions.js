@@ -276,7 +276,8 @@ async function create_changed_transaction(){
 		[1000, 1000, 1000, 1000, 1000, 1000, 1000],
 		{
 			from: account,
-			value: 6000
+			value: 1000000000000000000,
+			gas: 30000
 		},
 		function(data) {
     		var stop = "here";

@@ -10,10 +10,10 @@ contract("Harberger", accounts => {
         //     [0, 1, 2, 3, 4, 5],
         //     ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
         //     [1000, 1000, 1000, 1000, 1000, 1000]);
-        // harberger.paintPixels(
-        //     [0],
-        //     ["0xFFFFFF"],
-        //     [1000]);
+        harberger.paintPixels(
+            [0],
+            ["0xFFFFFF"],
+            [1000]);
         // harberger.paintPixel(0, "OxFFFFFF", 1000);
     });
 });
