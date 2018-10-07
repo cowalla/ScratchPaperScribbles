@@ -32,8 +32,8 @@ function erase_canvas(){
     await $.getJSON(url, function(contract){
         window.contract = contract;
         contractAbi = window.contract.abi;
-        contractAddress = window.contract.networks["5777"].address;
-        contractTxHash = window.contract.networks["5777"].transactionHash;
+        contractAddress = window.contract.networks["3"].address;
+        contractTxHash = window.contract.networks["3"].transactionHash;
         window.contract = web3.eth.contract(contractAbi).at(contractAddress);
 
         erase_canvas()

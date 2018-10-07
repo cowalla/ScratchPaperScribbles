@@ -8920,8 +8920,15 @@
       "links": {},
       "address": "0xf5d8bb83260a175273f9c130188ed8fab8d25025",
       "transactionHash": "0xe9aa39b23b330156cb1ba2ca60ad0837b538178011a8e25ef057bab7307ae528"
-    }
+    },
+    "3": {
+      "events": {},
+      "links": {},
+      "address": "0xb2b208a0ce123c70966432940663e55225552acb",
+      "transactionHash": "0x05c30b236d5f37b8ec409e081c14e031e689a069b8a1e0a3f530af93edd7e62d"
+    },
   },
   "schemaVersion": "2.0.1",
   "updatedAt": "2018-10-07T18:26:07.140Z"
 }
+
