@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.4.24;
 pragma experimental ABIEncoderV2;
 
 contract Harberger {
@@ -29,9 +29,9 @@ contract Harberger {
     }
 
     function paintPixel(uint256 _id, string _color, uint256 _bid) payable public {
-        require(_bid == msg.value);
+        require(_bid <= msg.value);
         commons.transfer(msg.value);
-        paintPixel(_id, _color, _bid);
+        singlePixel(_id, _color, _bid);
     }
 
     function singlePixel(uint256 _id, string _color, uint256 _bid) internal {
@@ -65,7 +65,7 @@ contract Harberger {
             uint256 _bid = _bids[i];
             paintCredit -= _bid;
             if (paintCredit >= 0) {
-                paintPixel(_id, _color, _bid);
+                singlePixel(_id, _color, _bid);
             }
             else {
                 break;

@@ -249,23 +249,40 @@ async function create_changed_transaction(){
     var isCipher = !!cp.isCipher;
     var isMetaMask = !!cp.isMetaMask;
 
-    var account = await window.web3.eth.accounts[0];
+    if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+    } else {
+        // Set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+    }
+
+    var account = await web3.eth.accounts[0];
 
     var url = "http://localhost:8080/ScratchPaperScribbles/eth/build/contracts/Harberger.json";
     var contractAbi = null;
+    var code = null;
     await $.getJSON(url, function(contract){
         contractAbi = contract.abi;
     });
 
-    var contractAddress = "0x0";
+    var contractAddress = "0x87accdbde6da6902f507d62cf546d33df710ed41";
+    var contract = null;
 
-    // var contract = new window.web3.eth.Contract(contractAbi, contractAddress);
-    // var err, fee = await contract.methods.getFeeInWei().call();
-    // var err, tx = await contract.methods.contractFunction(argument)
-    //     .send({from: account, value: fee, gas: 300000})
-    //     .on('transactionHash', hash => {
-    //         // do stuff post-call
-    //     });
+    var contract = web3.eth.contract(contractAbi).at(contractAddress);
+
+    var thing = contract.paintPixels(
+    	[0, 1, 2, 3, 4, 5, 6],
+		["0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
+		[1000, 1000, 1000, 1000, 1000, 1000, 1000],
+		{
+			from: account,
+			value: 6000
+		},
+		function(data) {
+    		var stop = "here";
+		});
+
+    var here = "stop";
 
 }
 
