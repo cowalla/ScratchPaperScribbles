@@ -393,7 +393,7 @@ function differences_to_ids_colors_bids(differences, bid){
         colors = [],
         bids = new Array(differences.length).fill(bid);
 
-    for(i=0;i<differences.length.length;i++){
+    for(i=0;i<differences.length;i++){
         ids.push(differences[i][0])
         colors.push(differences[i][1])
     }
