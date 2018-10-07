@@ -37,7 +37,7 @@ contract Harberger {
 
     function singlePixel(uint256 _id, uint16[3] _rgb, uint256 _bid) internal {
         if (pixels[_id].lastUpdate == 0) {
-           pixels[_id] = ID(defaultRgb, minBid, timeLimit);
+            pixels[_id] = ID(defaultRgb, minBid, timeLimit);
         }
 
         bool expired = (block.timestamp - pixels[_id].lastUpdate) >= timeLimit;
@@ -64,37 +64,38 @@ contract Harberger {
         commons.transfer(msg.value);
 
         for (uint32 i = 0; i < _ids.length; i++) {
-           paintCredit -= _bids[i];
-           if (paintCredit >= 0) {
+            paintCredit -= _bids[i];
+            if (paintCredit >= 0) {
                 singlePixel(_ids[i], _rgb[i], _bids[i]);
-           }
+            }
         }
     }
 
-    function getPixelColor(uint _id) public view returns(uint16[3]) {
+    function getPixelColor(uint _id) public view returns (uint16[3]) {
         return pixels[_id].rgb;
     }
 
-    function getPixelValue(uint _id) public view returns(uint256) {
+    function getPixelValue(uint _id) public view returns (uint256) {
         return pixels[_id].value;
     }
-//     function changeTimeLimit(uint256 _timeLimit) public onlyOwner {
-//         timeLimit = _timeLimit;
-//     }
-// 
-//     function changeMinBid(uint256 _minBid) public onlyOwner {
-//         minBid = _minBid;
-//     }
-// 
-//     function changeCommons(address _commons) public onlyOwner {
-//         commons = _commons;
-//     }
-// 
-//     function changeOwner(address _owner) public onlyOwner {
-//         owner = _owner;
-//     }
-// 
-//     function changeMaxPixels(uint256 _maxPixels) public onlyOwner {
-//         maxPixels = _maxPixels;
-//     }
+
+    function changeTimeLimit(uint256 _timeLimit) public onlyOwner {
+        timeLimit = _timeLimit;
+    }
+
+    function changeMinBid(uint256 _minBid) public onlyOwner {
+        minBid = _minBid;
+    }
+
+    function changeCommons(address _commons) public onlyOwner {
+        commons = _commons;
+    }
+
+    function changeOwner(address _owner) public onlyOwner {
+        owner = _owner;
+    }
+
+    function changeMaxPixels(uint256 _maxPixels) public onlyOwner {
+        maxPixels = _maxPixels;
+    }
 }
