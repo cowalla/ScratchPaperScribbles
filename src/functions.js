@@ -391,7 +391,7 @@ function ascii_to_hexa(str)
 function differences_to_ids_colors_bids(differences, bid){
     var ids = [],
         colors = [],
-        bids = new Array(differences.length).fill(bid);
+        bids = new Array(differences.length).fill(bid + 1000000000000);
 
     for(i=0;i<differences.length;i++){
         ids.push(differences[i][0])
