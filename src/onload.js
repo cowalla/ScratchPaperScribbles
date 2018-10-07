@@ -14,6 +14,18 @@ if (typeof web3 !== 'undefined') {
     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
 }
 
+function erase_canvas(){
+    var imageData = canvas.ctx.getImageData(0,0,canvas.width, canvas.height);
+
+    for(var i=0; i<imageData.data.length; i++){
+        if(i%4 === 0){
+            imageData.data[i] = 255
+        } else {
+            imageData.data[i] = 0
+        }
+    }
+}
+
 (async function(){
     window.account = await web3.eth.accounts[0];
     await $.getJSON(url, function(contract){
@@ -21,11 +33,12 @@ if (typeof web3 !== 'undefined') {
         contractAbi = window.contract.abi;
         contractAddress = window.contract.networks["5777"].address;
         window.contract = web3.eth.contract(contractAbi).at(contractAddress);
-//
-        window.contract.Paint().watch(function(err, response){
+
+        erase_canvas()
+
+        window.contract.Paint({}, {fromBlock: 0}, function(err, response){
             var imageData = canvas.ctx.getImageData(0,0,canvas.width, canvas.height)
             var id = parseInt(response.args.ID.toString())
-            console.log(id);
             var [r,g,b] = response.args.RGB.toString().split(',')
             var value = parseInt(response.args.Value.toString())
 
