@@ -12,31 +12,32 @@ contract Harberger {
     uint256 timeLimit = 4 weeks;
     uint256 minBid = 100000000000000;
     uint256 maxPixels = 1000000;
+    uint16[3] defaultRGB = [256, 256, 256];
 
     struct ID {
-        string color;
+        uint8[3] rgb;
         uint256 value;
         uint256 lastUpdate;
     }
 
     mapping(uint => ID) pixels;
 
-    event Paint(uint ID, string Color, uint256 Value);
+    event Paint(uint Id, string Color, uint256 Value);
 
     modifier onlyOwner {
         require(msg.sender == owner);
         _;
     }
 
-    function paintPixel(uint256 _id, string _color, uint256 _bid) payable public {
+    function paintPixel(uint256 _id, uint8[3] _rgb, uint256 _bid) payable public {
         // require(_bid <= msg.value);
         commons.transfer(msg.value);
-        singlePixel(_id, _color, _bid);
+        singlePixel(_id, _rgb, _bid);
     }
 
-    function singlePixel(uint256 _id, string _color, uint256 _bid) internal {
+    function singlePixel(uint256 _id, uint8[3] _rgb, uint256 _bid) internal {
         if (pixels[_id].lastUpdate == 0) {
-           pixels[_id] = ID("#FFFFFF", minBid, timeLimit);
+           pixels[_id] = ID(defaultRGB, minBid, timeLimit);
         }
 
         bool expired = (block.timestamp - pixels[_id].lastUpdate) >= timeLimit;
@@ -49,32 +50,33 @@ contract Harberger {
             cost = minBid;
         }
 
-        require(cost < _bid);
+        // require(cost < _bid);
 
         pixels[_id].value = _bid;
-        pixels[_id].color = _color;
+        pixels[_id].rgb = _rgb;
         pixels[_id].lastUpdate = block.timestamp;
 
-        emit Paint(_id, _color, _bid);
+        // emit Paint(_id, _rgb, _bid);
     }
 
-    function paintPixels(uint256[] _ids, string[] _colors, uint256[] _bids) payable public {
-        // require(_ids.length == _colors.length == _bids.length);
-        uint256 paintCredit = msg.value;
-        commons.transfer(msg.value);
+    function paintPixels(uint256[] _ids, uint8[3][] _rgbs, uint256[] _bids) payable public {
+        // require(_ids.length == _rgbs.length == _bids.length);
+        //uint256 paintCredit = msg.value;
+        //commons.transfer(msg.value);
 
+        //for(uint32 i=0; i<_ids.length; i++){
+          //  paintCredit -= _bids[i];
 
-        for(uint32 i=0; i<_ids.length; i++){
-           uint256 _id = _ids[_id];
-           string memory _color = _colors[i];
-           uint256 _bid = _bids[i];
-           paintCredit -= _bid;
+            // if (paintCredit >= 0) {
+                // singlePixel(_ids[i], _rgbs[i], _bids[i]);
+            // }
 
-           if (paintCredit >= 0) {
-                singlePixel(_id, _color, _bid);
-           }
-        }
+        //}
     }
+
+//    function viewPixelColor(uint256 _id) public constant returns (string rgb) {
+  //      return pixels[_id].rgb;
+   // }
 
 //     function changeTimeLimit(uint256 _timeLimit) public onlyOwner {
 //         timeLimit = _timeLimit;
