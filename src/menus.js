@@ -39,6 +39,11 @@ var menus = {
 			description: "Creates a transaction for MetaMask to submit",
 		},
 		{
+			item: "&Submit drawing",
+			action: submit_drawing,
+			description: "Submits drawing",
+		},
+		{
 			item: "&Upload To Imgur",
 			action: function(){
 				// include the selection in the saved image

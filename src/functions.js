@@ -375,22 +375,86 @@ function on_blockchain_hex_updated(bc_hex){
 }
 
 
-var $create_changed_transaction;
-function submit_drawing(){
-    undoable(0, function(){
-        var canvasHeight = canvas.height
-        var canvasWidth = canvas.width
-        var imageData = canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-        // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
-        // Diff blockchain data
-        // Create transactions
-        var hexes = image_data_to_hex_list(imageData)
+//var $submit_drawing;
+//function submit_drawing(){
+//    undoable(0, function(){
+//        var canvasHeight = canvas.height
+//        var canvasWidth = canvas.width
+//        var imageData = canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+//        // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
+//        // Diff blockchain data
+//        // Create transactions
+//        var hexes = image_data_to_hex_list(imageData)
+//
+//        imageData = hex_list_to_image_data(hexes, imageData)
+//        imageData = random_change(imageData, 4)
+//        canvas.ctx.putImageData(imageData, 0, 0);
+//    });
+//
+//    if(undos.length<1){ return false; }
+//	this_ones_a_frame_changer();
+//
+//	redos.push(new Canvas(canvas));
+//
+//	ctx.copy(undos.pop());
+//}
 
-        imageData = hex_list_to_image_data(hexes, imageData)
-        imageData = random_change(imageData, 4)
-        canvas.ctx.putImageData(imageData, 0, 0);
-    });
+var $submit_drawing;
+function submit_drawing(){
+    if(undos.length == 0){console.log('nothing to do!'); return}
+
+    var lastAction = undos[undos.length-1];
+    var canvasHeight = lastAction.height
+    var canvasWidth = lastAction.width
+
+    // only submit one action
+    var oldHexes = image_data_to_hex_list(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
+    var imageData = image_data_to_hex_list(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
+    var toChange = hex_list_difference(oldHexes, imageData)
+
+    // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
+    // Diff blockchain data
+    // Create transactions
+    var hexes = image_data_to_hex_list(imageData)
+//
+//    imageData = hex_list_to_image_data(hexes, imageData)
+//    imageData = random_change(imageData, 4)
+//    canvas.ctx.putImageData(imageData, 0, 0);
+//
+//    if(undos.length<1){ return false; }
+//	this_ones_a_frame_changer();
+//
+//	redos.push(new Canvas(canvas));
+//
+//	ctx.copy(undos.pop());
 }
+
+function ascii_to_hexa(str)
+  {
+	var arr1 = [];
+	for (var n = 0, l = str.length; n < l; n ++)
+     {
+		var hex = Number(str.charCodeAt(n)).toString(16);
+		arr1.push(hex);
+	 }
+	return arr1.join('');
+   }
+
+function hex_list_to_ids_colors_bids(hex_list, bid){
+    var ids = [],
+        colors = [],
+        bids = new Array(hex_list.length).fill(bid);
+
+    for(i=0;i<hex_list.length;i++){
+        ids.push(hex_list[i][0])
+
+        hex_color = ascii_to_hexa(hex_list[i][1])
+        colors.push(hex_color)
+    }
+
+    return [ids, colors, bids]
+}
+
 
 var $create_changed_transaction;
 async function create_changed_transaction(){
@@ -421,14 +485,40 @@ async function create_changed_transaction(){
 
     var contract = null;
     var contract = web3.eth.contract(contractAbi).at(contractAddress);
-    var arraySize = 100
+    console.log(contractAddress)
+//
+    contract.Paint().watch(function(err, response){
+        console.log(response)
+    })
+
+    if(undos.length == 0){console.log('nothing to do!'); return}
+
+    var lastAction = undos[undos.length-1];
+    var canvasHeight = lastAction.height
+    var canvasWidth = lastAction.width
+
+    // only submit one action
+//    var oldHexes = image_data_to_hex_list(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
+//    var imageData = image_data_to_hex_list(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
+//    var toChange = hex_list_difference(oldHexes, imageData)
+    var arraySize = 10
     var minBid = 100000000000000;
-    var bid = 13 * minBid
+    var bid = 33 * minBid
     var bids = new Array(arraySize).fill(bid);
-    var color = "#FFFFFF"
-    var colors = new Array(arraySize).fill(bid);
+    var color = '000d23'
+    var colors = new Array(arraySize).fill(color);
     var ids = [...Array(arraySize).keys()].slice(1, arraySize);
+    ids.push(1000)
     var idx = 6;
+
+//    var [ids, colors, bids] = hex_list_to_ids_colors_bids(toChange, bid);
+
+    for(var i=0; i<colors.length;i++){
+        [r,g,b,a] = hex_to_rgba(colors[i]);
+        colors[i] = [r,g,b]
+    }
+
+    console.log(ids, colors, bids)
 
 //    var resp = contract.paintPixel(idx, color, bid, function(d){
 //        contract.paintPixel(idx, color, 2*bid, function(d){console.log(d);});
@@ -443,7 +533,9 @@ async function create_changed_transaction(){
 			value: 10000000000000000,
 			gas: 30000000
 		},
-        function(d){console.log('completed')}
+        function(d){
+            contract.viewPixelColor(1, function(value){ console.log(value) })
+        }
     )
 }
 

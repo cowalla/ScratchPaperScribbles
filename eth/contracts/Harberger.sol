@@ -50,7 +50,7 @@ contract Harberger {
             cost = minBid;
         }
 
-        require(cost < _bid);
+        // require(cost < _bid);
 
         pixels[_id].value = _bid;
         pixels[_id].rgb = _rgb;
