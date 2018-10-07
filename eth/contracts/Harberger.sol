@@ -21,7 +21,6 @@ contract Harberger {
     }
 
     mapping(uint => ID) pixels;
-
     event Paint(uint ID, uint16[3] RGB, uint256 Value);
 
     modifier onlyOwner {
