@@ -30,7 +30,7 @@ contract Harberger {
     }
 
     function paintPixel(uint256 _id, uint16[3] _rgb, uint256 _bid) payable public {
-        // require(_bid <= msg.value);
+        require(_bid <= msg.value);
         commons.transfer(msg.value);
         singlePixel(_id, _rgb, _bid);
     }
@@ -50,7 +50,7 @@ contract Harberger {
             cost = minBid;
         }
 
-        // require(cost < _bid);
+        require(cost < _bid);
 
         pixels[_id].value = _bid;
         pixels[_id].rgb = _rgb;
