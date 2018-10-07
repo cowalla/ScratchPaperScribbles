@@ -12,31 +12,32 @@ contract Harberger {
     uint256 timeLimit = 4 weeks;
     uint256 minBid = 100000000000000;
     uint256 maxPixels = 1000000;
+    uint16[3] defaultRgb = [256, 256, 256];
 
     struct ID {
-        string color;
+        uint16[3] rgb;
         uint256 value;
         uint256 lastUpdate;
     }
 
     mapping(uint => ID) pixels;
 
-    event Paint(uint ID, string Color, uint256 Value);
+    event Paint(uint ID, uint16[3] RGB, uint256 Value);
 
     modifier onlyOwner {
         require(msg.sender == owner);
         _;
     }
 
-    function paintPixel(uint256 _id, string _color, uint256 _bid) payable public {
+    function paintPixel(uint256 _id, uint16[3] _rgb, uint256 _bid) payable public {
         // require(_bid <= msg.value);
         commons.transfer(msg.value);
-        singlePixel(_id, _color, _bid);
+        singlePixel(_id, _rgb, _bid);
     }
 
-    function singlePixel(uint256 _id, string _color, uint256 _bid) internal {
+    function singlePixel(uint256 _id, uint16[3] _rgb, uint256 _bid) internal {
         if (pixels[_id].lastUpdate == 0) {
-           pixels[_id] = ID("#FFFFFF", minBid, timeLimit);
+           pixels[_id] = ID(defaultRgb, minBid, timeLimit);
         }
 
         bool expired = (block.timestamp - pixels[_id].lastUpdate) >= timeLimit;
@@ -52,32 +53,26 @@ contract Harberger {
         require(cost < _bid);
 
         pixels[_id].value = _bid;
-        pixels[_id].color = _color;
+        pixels[_id].rgb = _rgb;
         pixels[_id].lastUpdate = block.timestamp;
 
-        emit Paint(_id, _color, _bid);
+        emit Paint(_id, _rgb, _bid);
     }
 
-    function paintPixels(uint256[] _ids, string[] _colors, uint256[] _bids) payable public {
-        // require(_ids.length == _colors.length == _bids.length);
+    function paintPixels(uint256[] _ids, uint16[3][] _rgb, uint256[] _bids) payable public {
         uint256 paintCredit = msg.value;
         commons.transfer(msg.value);
 
-
-        for(uint32 i=0; i<_ids.length; i++){
-           uint256 _id = _ids[_id];
-           string memory _color = _colors[i];
-           uint256 _bid = _bids[i];
-           paintCredit -= _bid;
-
+        for (uint32 i = 0; i < _ids.length; i++) {
+           paintCredit -= _bids[i];
            if (paintCredit >= 0) {
-                singlePixel(_id, _color, _bid);
+                singlePixel(_ids[i], _rgb[i], _bids[i]);
            }
         }
     }
 
-    function getPixelColor(uint _id) public view returns(string) {
-        return pixels[_id].color;
+    function getPixelColor(uint _id) public view returns(uint16[3]) {
+        return pixels[_id].rgb;
     }
 
     function getPixelValue(uint _id) public view returns(uint256) {
