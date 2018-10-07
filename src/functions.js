@@ -456,41 +456,18 @@ function hex_list_to_ids_colors_bids(hex_list, bid){
 }
 
 
+function put_pixel_values_from_blockchain() {
+    var imageData = canvas.ctx.getImageData(0,0,canvas.width,canvas.height)
+    var maxIndex = canvas.width * canvas.height;
+
+    for(var i=0; i<maxIndex; i++){
+        imageData.data[i] = contract.getPixelColor(i);
+    }
+}
+
+
 var $create_changed_transaction;
 async function create_changed_transaction(){
-    console.log('create_changed_transaction');
-
-    var { currentProvider: cp } = window.web3;
-    var isToshi = !!cp.isToshi;
-    var isCipher = !!cp.isCipher;
-    var isMetaMask = !!cp.isMetaMask;
-
-    if (typeof web3 !== 'undefined') {
-        web3 = new Web3(web3.currentProvider);
-    } else {
-        // Set the provider you want from Web3.providers
-        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-    }
-
-    var account = await web3.eth.accounts[0];
-
-    var url = "http://localhost:63342/ScratchPaperScribbles/eth/build/contracts/Harberger.json";
-    var contractAbi = null;
-    var code = null;
-    var contractAddress = null;
-    await $.getJSON(url, function(contract){
-        contractAbi = contract.abi;
-        contractAddress = contract.networks["5777"].address;
-    });
-
-    var contract = null;
-    var contract = web3.eth.contract(contractAbi).at(contractAddress);
-    console.log(contractAddress)
-//
-    contract.Paint().watch(function(err, response){
-        console.log(response)
-    })
-
     if(undos.length == 0){console.log('nothing to do!'); return}
 
     var lastAction = undos[undos.length-1];
@@ -498,20 +475,14 @@ async function create_changed_transaction(){
     var canvasWidth = lastAction.width
 
     // only submit one action
-//    var oldHexes = image_data_to_hex_list(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
-//    var imageData = image_data_to_hex_list(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
-//    var toChange = hex_list_difference(oldHexes, imageData)
-    var arraySize = 10
+    var oldHexes = image_data_to_hex_list(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
+    var imageData = image_data_to_hex_list(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
+    var toChange = hex_list_difference(oldHexes, imageData)
+//    var arraySize = 10
     var minBid = 100000000000000;
     var bid = 33 * minBid
-    var bids = new Array(arraySize).fill(bid);
-    var color = '000d23'
-    var colors = new Array(arraySize).fill(color);
-    var ids = [...Array(arraySize).keys()].slice(1, arraySize);
-    ids.push(1000)
-    var idx = 6;
 
-//    var [ids, colors, bids] = hex_list_to_ids_colors_bids(toChange, bid);
+    var [ids, colors, bids] = hex_list_to_ids_colors_bids(toChange, bid);
 
     for(var i=0; i<colors.length;i++){
         [r,g,b,a] = hex_to_rgba(colors[i]);
@@ -520,21 +491,17 @@ async function create_changed_transaction(){
 
     console.log(ids, colors, bids)
 
-//    var resp = contract.paintPixel(idx, color, bid, function(d){
-//        contract.paintPixel(idx, color, 2*bid, function(d){console.log(d);});
-//    });
-
-    var paintPixelsResponse = contract.paintPixels(
+    var paintPixelsResponse = window.contract.paintPixels(
         ids,
         colors,
         bids,
 		{
 			from: account,
 			value: 10000000000000000,
-			gas: 30000000
+			gas: 300000000
 		},
         function(d){
-            contract.viewPixelColor(1, function(value){ console.log(value) })
+            console.log(d)
         }
     )
 }

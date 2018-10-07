@@ -20,7 +20,6 @@ var palette = [
 var polychrome_palette = palette;
 var monochrome_palette = make_monochrome_palette();
 
-
 var stroke_color;
 var fill_color;
 var stroke_color_k = 0;
