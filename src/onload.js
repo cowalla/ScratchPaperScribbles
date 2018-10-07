@@ -20,11 +20,16 @@ if (typeof web3 !== 'undefined') {
         window.contract = contract;
         contractAbi = window.contract.abi;
         contractAddress = window.contract.networks["5777"].address;
+        contractTxHash = window.contract.networks["5777"].transactionHash;
         window.contract = web3.eth.contract(contractAbi).at(contractAddress);
-        
-        var event = window.contract.Paint({}, {fromBlock: 0}, function(error, result) {
+
+        web3.eth.getTransaction(contractTxHash, function(error, transaction) {
             if (!error) {
-                console.log(result);
+                var event = window.contract.Paint({}, {fromBlock: transaction.blockNumber}, function (error, result) {
+                    if (!error) {
+                        console.log(result);
+                    }
+                });
             }
         });
     });
