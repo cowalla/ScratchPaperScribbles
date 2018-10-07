@@ -388,16 +388,14 @@ function ascii_to_hexa(str)
 	return arr1.join('');
    }
 
-function hex_list_to_ids_colors_bids(hex_list, bid){
+function differences_to_ids_colors_bids(differences, bid){
     var ids = [],
         colors = [],
-        bids = new Array(hex_list.length).fill(bid);
+        bids = new Array(differences.length).fill(bid);
 
-    for(i=0;i<hex_list.length;i++){
-        ids.push(hex_list[i][0])
-
-        hex_color = ascii_to_hexa(hex_list[i][1])
-        colors.push(hex_color)
+    for(i=0;i<differences.length.length;i++){
+        ids.push(differences[i][0])
+        colors.push(differences[i][1])
     }
 
     return [ids, colors, bids]
@@ -412,21 +410,21 @@ async function create_changed_transaction(){
     var canvasHeight = lastAction.height
     var canvasWidth = lastAction.width
 
-    // only submit one action
-    var oldHexes = image_data_to_hex_list(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
-    var imageData = image_data_to_hex_list(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight))
-    var toChange = hex_list_difference(oldHexes, imageData)
-//    var arraySize = 10
+    var oldIm = chunk(lastAction.ctx.getImageData(0, 0, canvasWidth, canvasHeight).data, 4)
+    var newIm = chunk(canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight).data, 4)
+    var img_difference = []
+
+    for(var i=0; i<newIm.length; i++){
+        var [r,g,b,a] = newIm[i]
+        var [r0,g0,b0,a0] = oldIm[i]
+
+        if(r != r0 || g != g0 || b != b0){
+            img_difference.push([i, [r,g,b]])
+        }
+    }
     var minBid = 100000000000000;
     var bid = 33 * minBid
-
-    var [ids, colors, bids] = hex_list_to_ids_colors_bids(toChange, bid);
-
-    for(var i=0; i<colors.length;i++){
-        [r,g,b,a] = hex_to_rgba(colors[i]);
-        colors[i] = [r,g,b]
-    }
-
+    var [ids, colors, bids] = differences_to_ids_colors_bids(img_difference, bid);
     console.log(ids, colors, bids)
 
     var paintPixelsResponse = window.contract.paintPixels(
