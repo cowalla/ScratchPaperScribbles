@@ -376,7 +376,7 @@ function on_blockchain_hex_updated(bc_hex){
 
 
 var $create_changed_transaction;
-function create_changed_transaction(){
+function submit_drawing(){
     undoable(0, function(){
         var canvasHeight = canvas.height
         var canvasWidth = canvas.width
@@ -390,6 +390,61 @@ function create_changed_transaction(){
         imageData = random_change(imageData, 4)
         canvas.ctx.putImageData(imageData, 0, 0);
     });
+}
+
+var $create_changed_transaction;
+async function create_changed_transaction(){
+    console.log('create_changed_transaction');
+
+    var { currentProvider: cp } = window.web3;
+    var isToshi = !!cp.isToshi;
+    var isCipher = !!cp.isCipher;
+    var isMetaMask = !!cp.isMetaMask;
+
+    if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+    } else {
+        // Set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+    }
+
+    var account = await web3.eth.accounts[0];
+
+    var url = "http://localhost:63342/ScratchPaperScribbles/eth/build/contracts/Harberger.json";
+    var contractAbi = null;
+    var code = null;
+    var contractAddress = null;
+    await $.getJSON(url, function(contract){
+        contractAbi = contract.abi;
+        contractAddress = contract.networks["5777"].address;
+    });
+
+    var contract = null;
+    var contract = web3.eth.contract(contractAbi).at(contractAddress);
+    var arraySize = 100
+    var minBid = 100000000000000;
+    var bid = 13 * minBid
+    var bids = new Array(arraySize).fill(bid);
+    var color = "#FFFFFF"
+    var colors = new Array(arraySize).fill(bid);
+    var ids = [...Array(arraySize).keys()].slice(1, arraySize);
+    var idx = 6;
+
+//    var resp = contract.paintPixel(idx, color, bid, function(d){
+//        contract.paintPixel(idx, color, 2*bid, function(d){console.log(d);});
+//    });
+
+    var paintPixelsResponse = contract.paintPixels(
+        ids,
+        colors,
+        bids,
+		{
+			from: account,
+			value: 10000000000000000,
+			gas: 30000000
+		},
+        function(d){console.log('completed')}
+    )
 }
 
 function file_save(){
@@ -867,12 +922,12 @@ function select_tool(tool){
 		previous_tool = selected_tool;
 	}
 	selected_tool = tool;
-	
+
 	deselect();
 	if(selected_tool.activate){
 		selected_tool.activate();
 	}
-	
+
 	$toolbox.update_selected_tool();
 	// $toolbox2.update_selected_tool();
 }
@@ -1221,7 +1276,7 @@ function set_as_wallpaper_tiled(c){
 
 function set_as_wallpaper_centered(c){
 	c = c || canvas;
-	
+
 	// Note: we can't just poke in a different set_as_wallpaper_centered function, because it's stored in menus.js
 	if(window.systemSetAsWallpaperCentered){
 		return window.systemSetAsWallpaperCentered(c);
