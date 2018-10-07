@@ -247,9 +247,7 @@ function component_to_hex(c) {
 }
 
 function rgba_to_hex(rgba) {
-    var r = rgba[0]
-    var g = rgba[1]
-    var b = rgba[2]
+    var [r,g,b] = rgba.slice(0,3)
 
     return "#" + component_to_hex(r) + component_to_hex(g) + component_to_hex(b);
 }
@@ -316,6 +314,33 @@ function hex_list_difference(oldHexes, newHexes) {
     return differences
 }
 
+function blockchain_hexes_to_hex_list(bcHexes){
+    hexList = [].fill(0)
+
+    for (var i=0; i<bcHexes.length; i++){
+        var hexId = bcHexes[0];
+        var hex = bcHexes[1];
+
+        hexList[hexId] = hex;
+    }
+
+    return hexList
+}
+
+function get_bc_difference_from_hex_list(hex_list, bcHexes){
+    // returns a list of (idx, hex) entries that are different between the hexlist and the (bc_hex_id, bc_hex) list
+    var bc_differences = [];
+
+    for(var i=0; i<bcHexes.length; i++){
+        var [bcHexId, bcHex] = bcHexes[i]
+        var currentHex = hex_list[bcHexId]
+
+        if(bcHex !== currentHex){
+            bc_differences.push([bcHexId, currentHex])
+        }
+    }
+}
+
 function random_change(image_data, change_factor){
     for(i=0; i<(image_data.data.length - 3); i++){
         randint = Math.floor((Math.random() * 100) + 1);
@@ -331,20 +356,40 @@ function random_change(image_data, change_factor){
     return image_data
 }
 
-var $create_changed_transaction;
-function create_changed_transaction(){
-    console.log('create_changed_transaction')
+
+var $on_blockchain_hex_updated;
+function on_blockchain_hex_updated(bc_hex){
+    // function to call when the blockchain emits the "Pixel" event
     var canvasHeight = canvas.height
     var canvasWidth = canvas.width
     var imageData = canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-    // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
-    // Diff blockchain data
-    // Create transactions
-    var hexes = image_data_to_hex_list(imageData)
+    var [bcHexId, hex] = bcHex;
+    var [r,g,b,a] = hex_to_rgba(hex)
+    var rgbaIndex = (4 * bcHexId)
 
-    imageData = hex_list_to_image_data(hexes, imageData)
-    imageData = random_change(imageData, 4)
+    imageData.data[rgbaIndex] = r
+    imageData.data[rgbaIndex+1] = g
+    imageData.data[rgbaIndex+2] = b
+    imageData.data[rgbaIndex+3] = a
     canvas.ctx.putImageData(imageData, 0, 0);
+}
+
+
+var $create_changed_transaction;
+function create_changed_transaction(){
+    undoable(0, function(){
+        var canvasHeight = canvas.height
+        var canvasWidth = canvas.width
+        var imageData = canvas.ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+        // imageData comes in form (r, g, b, a), meaning every pixel has four indices describing its color
+        // Diff blockchain data
+        // Create transactions
+        var hexes = image_data_to_hex_list(imageData)
+
+        imageData = hex_list_to_image_data(hexes, imageData)
+        imageData = random_change(imageData, 4)
+        canvas.ctx.putImageData(imageData, 0, 0);
+    });
 }
 
 function file_save(){
