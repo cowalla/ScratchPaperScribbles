@@ -258,32 +258,51 @@ async function create_changed_transaction(){
 
     var account = await web3.eth.accounts[0];
 
-    var url = "http://localhost:8080/ScratchPaperScribbles/eth/build/contracts/Harberger.json";
+    var url = "http://localhost:63342/ScratchPaperScribbles/eth/build/contracts/Harberger.json";
     var contractAbi = null;
     var code = null;
+    var contractAddress = null;
     await $.getJSON(url, function(contract){
         contractAbi = contract.abi;
+        contractAddress = contract.networks["5777"].address;
     });
 
-    var contractAddress = "0x87accdbde6da6902f507d62cf546d33df710ed41";
     var contract = null;
-
     var contract = web3.eth.contract(contractAbi).at(contractAddress);
+    var arraySize = 1
+    var minBid = 100000000000000;
+    var bid = 10 * minBid
+    var bids = new Array(arraySize).fill(bid);
+    var color = "#FFFFFF"
+    var colors = new Array(arraySize).fill(bid);
+    var ids = [...Array(arraySize).keys()].slice(1, arraySize);
+    var idx = 6;
 
-    var thing = contract.paintPixels(
-    	[0, 1, 2, 3, 4, 5, 6],
-		["0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
-		[1000, 1000, 1000, 1000, 1000, 1000, 1000],
-		{
-			from: account,
-			value: 1000000000000000000,
-			gas: 30000
-		},
-		function(data) {
-    		var stop = "here";
-		});
+//    var resp = contract.paintPixel(idx, color, bid, function(d){
+//        contract.paintPixel(idx, color, 2*bid, function(d){console.log(d);});
+//    });
 
-    var here = "stop";
+    var paintPixelsResponse = contract.paintPixels(
+        ids,
+        colors,
+        bids,
+        function(d){console.log('completed')}
+    )
+
+//    var resp = contract.paintPixel(ids[0], color, bid, function(d){console.log(d);});
+
+//    var thing = contract.paintPixels(
+//    	[0, 1, 2, 3, 4, 5, 6],
+//		["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"],
+//		bids,
+//		{
+//			from: account,
+//			value: 10000000000000000,
+//			gas: 3000000
+//		},
+//		function(data) {
+//    		console.log(data)
+//		});
 
 }
 
