@@ -32,6 +32,7 @@
   "dependencies": {
     "gulp": "^3.9.1",
     "nw": "^0.27.4",
+    "truffle-hdwallet-provider": "0.0.6",
     "wallpaper": "^2.6.0"
   },
   "repository": {
@@ -43,8 +44,6 @@
   },
   "devDependencies": {
     "cross-spawn": "^5.1.0",
-    "http-server": "^0.11.1",
-    "live-server": "^1.2.0",
     "parallelshell": "^3.0.2",
     "phantomcss": "^1.4.0"
   }

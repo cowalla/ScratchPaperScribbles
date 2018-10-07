@@ -1,6 +1,6 @@
 var contractAbi,
     contractAddress,
-    url = 'http://localhost:63342/ScratchPaperScribbles/eth/build/contracts/Harberger.json',
+    url = "https://github.com/cowalla/ScratchPaperScribbles/blob/master/eth/build/contracts/Harberger.json";
     imageSize = 1000;
 
 var { currentProvider: cp } = window.web3;
